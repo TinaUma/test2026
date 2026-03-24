@@ -1,0 +1,6 @@
+node_modules/
+SOLUTION.html
+generate-pdf.mjs
+diagram.mmd
+package.json
+package-lock.json
