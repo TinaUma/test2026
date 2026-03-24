@@ -1,0 +1,44 @@
+# FastAPI Stack Reference
+# Used by /docs:init for project scanning
+
+name: FastAPI
+detect:
+  files: ["requirements.txt", "pyproject.toml", "main.py"]
+  patterns: ["fastapi", "uvicorn"]
+
+scan_paths:
+  routes:
+    paths: ["app/api/", "app/routers/", "routers/", "api/"]
+    patterns: ["*.py"]
+    markers: ["@router", "APIRouter", "@app.get", "@app.post"]
+
+  models:
+    paths: ["app/models/", "models/"]
+    patterns: ["*.py"]
+    markers: ["class.*Base", "SQLAlchemy", "Column"]
+
+  schemas:
+    paths: ["app/schemas/", "schemas/"]
+    patterns: ["*.py"]
+    markers: ["BaseModel", "Pydantic"]
+
+  services:
+    paths: ["app/services/", "services/"]
+    patterns: ["*.py"]
+
+  repositories:
+    paths: ["app/repositories/", "repositories/"]
+    patterns: ["*.py"]
+
+  tasks:
+    paths: ["app/tasks/", "tasks/"]
+    patterns: ["*.py"]
+    markers: ["@celery", "@shared_task"]
+
+grouping_hints:
+  auth: ["auth", "login", "register", "token", "jwt", "session"]
+  users: ["user", "profile", "account"]
+  billing: ["payment", "subscription", "invoice", "stripe"]
+
+test_command: "pytest -v"
+coverage_command: "pytest --cov=app --cov-report=term-missing"

@@ -1,0 +1,35 @@
+# PyQt6 Desktop GUI Stack Reference
+# Used by /init for project scanning
+
+name: PyQt6
+detect:
+  files: ["requirements.txt", "pyproject.toml"]
+  patterns: ["PyQt6", "pyqt6", "PyQt5"]
+
+scan_paths:
+  ui:
+    paths: ["app/", "src/", "ui/"]
+    patterns: ["*.py"]
+    markers: ["QMainWindow", "QWidget", "QDialog", "QApplication"]
+
+  workers:
+    paths: ["app/", "src/", "workers/"]
+    patterns: ["*.py"]
+    markers: ["QThread", "QRunnable", "pyqtSignal"]
+
+  resources:
+    paths: ["app/resources/", "resources/", "assets/"]
+    patterns: ["*.qss", "*.ico", "*.png", "*.svg"]
+
+  settings:
+    paths: ["app/", "src/"]
+    patterns: ["*.py"]
+    markers: ["QSettings", "settings", "config"]
+
+grouping_hints:
+  overlay: ["overlay", "transparent", "topmost", "click-through"]
+  tray: ["tray", "QSystemTrayIcon", "systray"]
+  settings: ["settings", "config", "preferences"]
+
+test_command: "pytest -v"
+coverage_command: "pytest --cov=app --cov-report=term-missing"

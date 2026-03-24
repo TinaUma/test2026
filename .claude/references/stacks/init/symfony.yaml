@@ -1,0 +1,47 @@
+# Symfony Stack Reference
+
+name: Symfony
+detect:
+  files: ["composer.json", "symfony.lock"]
+  patterns: ["symfony"]
+
+scan_paths:
+  controllers:
+    paths: ["src/Controller/"]
+    patterns: ["*.php"]
+    markers: ["extends AbstractController"]
+
+  entities:
+    paths: ["src/Entity/"]
+    patterns: ["*.php"]
+    markers: ["@ORM\\Entity", "#[ORM\\Entity]"]
+
+  repositories:
+    paths: ["src/Repository/"]
+    patterns: ["*.php"]
+    markers: ["extends ServiceEntityRepository"]
+
+  services:
+    paths: ["src/Service/"]
+    patterns: ["*.php"]
+
+  forms:
+    paths: ["src/Form/"]
+    patterns: ["*.php"]
+    markers: ["extends AbstractType"]
+
+  commands:
+    paths: ["src/Command/"]
+    patterns: ["*.php"]
+    markers: ["extends Command"]
+
+  events:
+    paths: ["src/Event/", "src/EventSubscriber/"]
+    patterns: ["*.php"]
+
+grouping_hints:
+  auth: ["security", "auth", "user", "login"]
+  api: ["api", "controller", "rest"]
+
+test_command: "php bin/phpunit"
+coverage_command: "php bin/phpunit --coverage-text"

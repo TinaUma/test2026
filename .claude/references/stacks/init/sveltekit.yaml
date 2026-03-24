@@ -1,0 +1,39 @@
+# SvelteKit Stack Reference
+
+name: SvelteKit
+detect:
+  files: ["svelte.config.js", "package.json"]
+  patterns: ["@sveltejs/kit"]
+
+scan_paths:
+  routes:
+    paths: ["src/routes/"]
+    patterns: ["+page.svelte", "+layout.svelte", "+server.ts", "+server.js"]
+
+  components:
+    paths: ["src/lib/components/", "src/components/"]
+    patterns: ["*.svelte"]
+
+  stores:
+    paths: ["src/lib/stores/", "src/stores/"]
+    patterns: ["*.ts", "*.js"]
+    markers: ["writable", "readable", "derived"]
+
+  api:
+    paths: ["src/routes/api/"]
+    patterns: ["+server.ts", "+server.js"]
+
+  lib:
+    paths: ["src/lib/"]
+    patterns: ["*.ts", "*.js"]
+
+  hooks:
+    paths: ["src/"]
+    patterns: ["hooks.server.ts", "hooks.client.ts"]
+
+grouping_hints:
+  auth: ["login", "auth", "user"]
+  api: ["api", "server"]
+
+test_command: "npm test"
+coverage_command: "vitest --coverage"

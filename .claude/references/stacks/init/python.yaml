@@ -1,0 +1,31 @@
+# Python Stack Reference
+
+name: Python
+detect:
+  files: ["requirements.txt", "setup.py", "pyproject.toml", "setup.cfg"]
+  patterns: ["python", "py"]
+
+scan_paths:
+  source:
+    paths: ["src/", "app/", "lib/"]
+    patterns: ["*.py"]
+
+  tests:
+    paths: ["tests/", "test/"]
+    patterns: ["test_*.py", "*_test.py"]
+
+  scripts:
+    paths: ["."]
+    patterns: ["*.py"]
+    markers: ["if __name__"]
+
+grouping_hints:
+  models: ["model", "schema", "entity"]
+  services: ["service", "handler", "manager"]
+  utils: ["util", "helper", "mixin"]
+  cli: ["cli", "main", "cmd"]
+
+test_command: "pytest"
+coverage_command: "pytest --cov"
+lint_command: "ruff check . || flake8"
+format_command: "black . || ruff format ."

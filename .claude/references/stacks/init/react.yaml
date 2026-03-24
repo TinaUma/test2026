@@ -1,0 +1,40 @@
+# React Stack Reference
+
+name: React
+detect:
+  files: ["package.json"]
+  patterns: ["react", "react-dom"]
+
+scan_paths:
+  pages:
+    paths: ["src/pages/", "src/views/"]
+    patterns: ["*.jsx", "*.tsx"]
+
+  components:
+    paths: ["src/components/"]
+    patterns: ["*.jsx", "*.tsx"]
+
+  hooks:
+    paths: ["src/hooks/"]
+    patterns: ["use*.js", "use*.ts", "use*.jsx", "use*.tsx"]
+    markers: ["export function use", "export const use"]
+
+  contexts:
+    paths: ["src/contexts/", "src/context/"]
+    patterns: ["*.jsx", "*.tsx"]
+    markers: ["createContext"]
+
+  stores:
+    paths: ["src/stores/", "src/store/"]
+    patterns: ["*.ts", "*.js"]
+
+  api:
+    paths: ["src/api/", "src/services/"]
+    patterns: ["*.ts", "*.js"]
+
+grouping_hints:
+  auth: ["login", "auth", "user", "session"]
+  layout: ["layout", "header", "footer", "sidebar"]
+
+test_command: "npm test"
+coverage_command: "npm test -- --coverage"

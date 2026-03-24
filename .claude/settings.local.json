@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python .claude-lib/bootstrap/bootstrap.py --ide claude --smart)",
+      "Bash(.frai/frai init:*)",
+      "Bash(.frai/frai status:*)"
+    ]
+  }
+}

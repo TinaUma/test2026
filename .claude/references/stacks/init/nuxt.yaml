@@ -1,0 +1,46 @@
+# Nuxt.js Stack Reference
+
+name: Nuxt
+detect:
+  files: ["nuxt.config.ts", "nuxt.config.js", "package.json"]
+  patterns: ["nuxt"]
+
+scan_paths:
+  pages:
+    paths: ["pages/", "src/pages/"]
+    patterns: ["*.vue"]
+    markers: ["<template>", "definePageMeta"]
+
+  components:
+    paths: ["components/", "src/components/"]
+    patterns: ["*.vue"]
+
+  composables:
+    paths: ["composables/", "src/composables/"]
+    patterns: ["*.ts", "*.js"]
+    markers: ["export function use", "export const use"]
+
+  server:
+    paths: ["server/api/", "server/routes/"]
+    patterns: ["*.ts", "*.js"]
+    markers: ["defineEventHandler"]
+
+  middleware:
+    paths: ["middleware/", "server/middleware/"]
+    patterns: ["*.ts", "*.js"]
+
+  plugins:
+    paths: ["plugins/"]
+    patterns: ["*.ts", "*.js"]
+
+  stores:
+    paths: ["stores/"]
+    patterns: ["*.ts", "*.js"]
+    markers: ["defineStore"]
+
+grouping_hints:
+  auth: ["login", "auth", "user", "session"]
+  api: ["api", "server", "handler"]
+
+test_command: "npm test"
+coverage_command: "vitest --coverage"

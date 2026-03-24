@@ -1,0 +1,70 @@
+# Godot 4 Stack Reference
+
+name: Godot
+detect:
+  files: ["project.godot", "*.tscn", "*.godot"]
+  patterns: ["config_version=5", "GDScript", "extends Node"]
+
+scan_paths:
+  scripts:
+    paths: ["scripts/", "src/"]
+    patterns: ["*.gd"]
+    markers: ["extends", "class_name", "func"]
+
+  autoloads:
+    paths: ["scripts/autoloads/", "autoloads/"]
+    patterns: ["*.gd"]
+    markers: ["extends Node", "func _ready", "signal"]
+
+  gameplay:
+    paths: ["scripts/gameplay/", "scripts/game/"]
+    patterns: ["*.gd"]
+    markers: ["extends Node2D", "extends RigidBody2D", "extends Area2D"]
+
+  vfx:
+    paths: ["scripts/vfx/", "scripts/effects/"]
+    patterns: ["*.gd"]
+    markers: ["GPUParticles2D", "Line2D", "_draw", "class_name"]
+
+  ui:
+    paths: ["scripts/ui/", "scripts/menus/"]
+    patterns: ["*.gd"]
+    markers: ["extends Control", "extends Panel", "extends HBoxContainer"]
+
+  scenes:
+    paths: ["scenes/", "levels/"]
+    patterns: ["*.tscn"]
+
+  prefabs:
+    paths: ["prefabs/", "components/"]
+    patterns: ["*.tscn"]
+
+  shaders:
+    paths: ["shaders/", "materials/"]
+    patterns: ["*.gdshader", "*.tres"]
+
+  resources:
+    paths: ["resources/", "data/"]
+    patterns: ["*.gd", "*.tres"]
+    markers: ["extends Resource", "class_name"]
+
+  tests:
+    paths: ["tests/", "test/"]
+    patterns: ["*.gd"]
+    markers: ["extends GutTest", "func test_"]
+
+  localization:
+    paths: ["localization/", "translations/"]
+    patterns: ["*.json", "*.csv", "*.po"]
+
+grouping_hints:
+  player: ["player", "amplifier", "input", "controller"]
+  gameplay: ["game", "session", "spawner", "detector"]
+  physics: ["collision", "physics", "body", "area"]
+  audio: ["audio", "sound", "music", "sfx", "ambient"]
+  vfx: ["vfx", "particle", "effect", "burst", "trail"]
+  ui: ["ui", "hud", "menu", "popup", "screen"]
+  meta: ["save", "settings", "config", "manager"]
+
+test_command: "godot --headless --script tests/run_tests.gd"
+build_command: "godot --headless --export-release"

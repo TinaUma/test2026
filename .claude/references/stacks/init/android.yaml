@@ -1,0 +1,56 @@
+# Android/Kotlin Stack Reference
+
+name: Android
+detect:
+  files: ["build.gradle", "build.gradle.kts", "settings.gradle", "AndroidManifest.xml"]
+  patterns: ["android", "kotlin", "compose"]
+
+scan_paths:
+  ui:
+    paths: ["app/src/main/java/**/ui/", "app/src/main/kotlin/**/ui/"]
+    patterns: ["*.kt"]
+    markers: ["@Composable", "Scaffold", "Column", "Row"]
+
+  screens:
+    paths: ["**/screens/", "**/presentation/"]
+    patterns: ["*.kt"]
+    markers: ["@Composable", "Screen"]
+
+  viewmodels:
+    paths: ["**/viewmodel/", "**/viewmodels/"]
+    patterns: ["*.kt"]
+    markers: ["ViewModel", "StateFlow", "MutableStateFlow"]
+
+  models:
+    paths: ["**/model/", "**/models/", "**/domain/"]
+    patterns: ["*.kt"]
+    markers: ["data class", "sealed"]
+
+  repositories:
+    paths: ["**/repository/", "**/data/"]
+    patterns: ["*.kt"]
+    markers: ["Repository", "suspend fun"]
+
+  di:
+    paths: ["**/di/", "**/injection/"]
+    patterns: ["*.kt"]
+    markers: ["@Module", "@Provides", "@Inject"]
+
+  services:
+    paths: ["**/service/", "**/api/"]
+    patterns: ["*.kt"]
+    markers: ["interface", "suspend fun", "Retrofit"]
+
+  tests:
+    paths: ["app/src/test/", "app/src/androidTest/"]
+    patterns: ["*.kt"]
+    markers: ["@Test", "fun test"]
+
+grouping_hints:
+  auth: ["login", "auth", "signin", "session"]
+  navigation: ["navigation", "navhost", "destination"]
+  data: ["repository", "datasource", "api"]
+
+test_command: "./gradlew test"
+coverage_command: "./gradlew jacocoTestReport"
+build_command: "./gradlew assembleRelease"

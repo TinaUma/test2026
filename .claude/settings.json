@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.frai/frai:*)",
+      "Bash(.frai/frai.cmd:*)",
+      "Bash(python .claude/scripts/project.py:*)",
+      "Bash(pytest:*)",
+      "Bash(git:*)"
+    ]
+  }
+}

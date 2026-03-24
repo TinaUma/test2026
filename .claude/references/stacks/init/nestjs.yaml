@@ -1,0 +1,43 @@
+# NestJS Stack Reference
+
+name: NestJS
+detect:
+  files: ["package.json", "nest-cli.json"]
+  patterns: ["@nestjs"]
+
+scan_paths:
+  controllers:
+    paths: ["src/*/", "src/**/controllers/"]
+    patterns: ["*.controller.ts"]
+    markers: ["@Controller"]
+
+  services:
+    paths: ["src/*/", "src/**/services/"]
+    patterns: ["*.service.ts"]
+    markers: ["@Injectable"]
+
+  modules:
+    paths: ["src/*/"]
+    patterns: ["*.module.ts"]
+    markers: ["@Module"]
+
+  entities:
+    paths: ["src/**/entities/"]
+    patterns: ["*.entity.ts"]
+    markers: ["@Entity"]
+
+  dto:
+    paths: ["src/**/dto/"]
+    patterns: ["*.dto.ts"]
+
+  guards:
+    paths: ["src/**/guards/"]
+    patterns: ["*.guard.ts"]
+    markers: ["@Injectable", "CanActivate"]
+
+grouping_hints:
+  auth: ["auth", "user", "jwt", "guard"]
+  api: ["controller", "service", "module"]
+
+test_command: "npm run test"
+coverage_command: "npm run test:cov"

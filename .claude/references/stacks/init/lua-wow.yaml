@@ -1,0 +1,29 @@
+# Lua WoW Addon Stack Reference
+# Used by /init for project scanning
+
+name: "Lua WoW Addon"
+detect:
+  files: ["*.toc"]
+  patterns: ["Interface:", "## Title:", "SavedVariables"]
+
+scan_paths:
+  core:
+    paths: ["addon/", ""]
+    patterns: ["*.lua"]
+    markers: ["CreateFrame", "RegisterEvent", "SetScript"]
+
+  toc:
+    paths: ["addon/", ""]
+    patterns: ["*.toc"]
+
+  savedvariables:
+    paths: ["addon/", ""]
+    patterns: ["*.lua"]
+    markers: ["SavedVariables", "SavedVariablesPerCharacter"]
+
+grouping_hints:
+  chat: ["CHAT_MSG", "SendChatMessage", "ChatFrame"]
+  events: ["RegisterEvent", "OnEvent", "ADDON_LOADED"]
+  slash: ["SlashCmdList", "SLASH_"]
+
+test_command: "echo 'No automated tests for WoW addons — test via /reload in game'"

@@ -1,0 +1,43 @@
+# Django Stack Reference
+
+name: Django
+detect:
+  files: ["manage.py", "settings.py"]
+  patterns: ["django"]
+
+scan_paths:
+  views:
+    paths: ["*/views/", "*/views.py"]
+    patterns: ["*.py"]
+    markers: ["def ", "class.*View"]
+
+  models:
+    paths: ["*/models/", "*/models.py"]
+    patterns: ["*.py"]
+    markers: ["class.*models.Model"]
+
+  serializers:
+    paths: ["*/serializers/", "*/serializers.py"]
+    patterns: ["*.py"]
+    markers: ["Serializer"]
+
+  urls:
+    paths: ["*/urls.py"]
+    patterns: ["*.py"]
+    markers: ["urlpatterns"]
+
+  admin:
+    paths: ["*/admin.py"]
+    patterns: ["*.py"]
+
+  tasks:
+    paths: ["*/tasks/", "*/tasks.py"]
+    patterns: ["*.py"]
+    markers: ["@shared_task", "@celery"]
+
+grouping_hints:
+  auth: ["auth", "login", "user", "account"]
+  api: ["api", "rest", "viewset"]
+
+test_command: "python manage.py test"
+coverage_command: "coverage run manage.py test && coverage report"

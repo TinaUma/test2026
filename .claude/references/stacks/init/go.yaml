@@ -1,0 +1,36 @@
+# Go Stack Reference
+
+name: Go
+detect:
+  files: ["go.mod", "go.sum"]
+  patterns: []
+
+scan_paths:
+  handlers:
+    paths: ["internal/handlers/", "handlers/", "api/", "cmd/"]
+    patterns: ["*.go"]
+    markers: ["func.*http.Handler", "func.*gin.Context", "func.*chi"]
+
+  models:
+    paths: ["internal/models/", "models/", "pkg/models/"]
+    patterns: ["*.go"]
+    markers: ["type.*struct"]
+
+  services:
+    paths: ["internal/services/", "services/", "pkg/services/"]
+    patterns: ["*.go"]
+
+  repository:
+    paths: ["internal/repository/", "repository/", "internal/db/"]
+    patterns: ["*.go"]
+
+  middleware:
+    paths: ["internal/middleware/", "middleware/"]
+    patterns: ["*.go"]
+
+grouping_hints:
+  auth: ["auth", "jwt", "session", "user"]
+  api: ["handler", "router", "api"]
+
+test_command: "go test ./..."
+coverage_command: "go test -coverprofile=coverage.out ./..."

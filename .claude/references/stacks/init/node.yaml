@@ -1,0 +1,33 @@
+# Node.js Stack Reference
+
+name: Node.js
+detect:
+  files: ["package.json"]
+  patterns: ["node", "npm", "yarn", "pnpm"]
+
+scan_paths:
+  source:
+    paths: ["src/", "lib/", "app/"]
+    patterns: ["*.js", "*.ts", "*.mjs", "*.cjs"]
+
+  tests:
+    paths: ["tests/", "test/", "__tests__/", "spec/"]
+    patterns: ["*.test.js", "*.spec.js", "*.test.ts", "*.spec.ts"]
+
+  scripts:
+    paths: ["."]
+    patterns: ["*.js", "*.ts"]
+    markers: ["require(", "import "]
+
+grouping_hints:
+  routes: ["route", "router", "handler", "controller"]
+  models: ["model", "schema", "entity"]
+  middleware: ["middleware", "guard", "interceptor"]
+  utils: ["util", "helper", "service"]
+
+test_command: "npm test"
+coverage_command: "npm test -- --coverage"
+lint_command: "npm run lint || npx eslint ."
+format_command: "npm run format || npx prettier --write ."
+build_command: "npm run build"
+dev_command: "npm run dev || node index.js"

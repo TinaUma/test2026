@@ -1,0 +1,46 @@
+# Flutter Stack Reference
+
+name: Flutter
+detect:
+  files: ["pubspec.yaml"]
+  patterns: ["flutter"]
+
+scan_paths:
+  screens:
+    paths: ["lib/screens/", "lib/pages/", "lib/views/"]
+    patterns: ["*.dart"]
+    markers: ["StatelessWidget", "StatefulWidget", "GetView"]
+
+  widgets:
+    paths: ["lib/widgets/", "lib/components/"]
+    patterns: ["*.dart"]
+
+  controllers:
+    paths: ["lib/controllers/", "lib/blocs/", "lib/cubits/"]
+    patterns: ["*.dart"]
+    markers: ["GetxController", "Bloc", "Cubit"]
+
+  models:
+    paths: ["lib/models/", "lib/entities/"]
+    patterns: ["*.dart"]
+
+  services:
+    paths: ["lib/services/", "lib/repositories/"]
+    patterns: ["*.dart"]
+
+  routes:
+    paths: ["lib/routes/"]
+    patterns: ["*.dart"]
+    markers: ["GetPage", "GoRoute"]
+
+  bindings:
+    paths: ["lib/bindings/"]
+    patterns: ["*.dart"]
+    markers: ["Bindings"]
+
+grouping_hints:
+  auth: ["auth", "login", "splash", "onboarding"]
+  profile: ["profile", "settings", "account"]
+
+test_command: "flutter test"
+coverage_command: "flutter test --coverage"

@@ -1,0 +1,36 @@
+# Express.js Stack Reference
+
+name: Express
+detect:
+  files: ["package.json"]
+  patterns: ["express"]
+
+scan_paths:
+  routes:
+    paths: ["src/routes/", "routes/", "src/controllers/"]
+    patterns: ["*.js", "*.ts"]
+    markers: ["router.", "app.get", "app.post"]
+
+  models:
+    paths: ["src/models/", "models/"]
+    patterns: ["*.js", "*.ts"]
+    markers: ["Schema", "mongoose", "sequelize"]
+
+  middleware:
+    paths: ["src/middleware/", "middleware/"]
+    patterns: ["*.js", "*.ts"]
+
+  services:
+    paths: ["src/services/", "services/"]
+    patterns: ["*.js", "*.ts"]
+
+  utils:
+    paths: ["src/utils/", "utils/", "src/lib/", "lib/"]
+    patterns: ["*.js", "*.ts"]
+
+grouping_hints:
+  auth: ["auth", "login", "user", "jwt", "session"]
+  api: ["api", "routes", "controller"]
+
+test_command: "npm test"
+coverage_command: "npm test -- --coverage"

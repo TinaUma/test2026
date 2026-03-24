@@ -1,0 +1,44 @@
+# Rust Stack Reference
+
+name: Rust
+detect:
+  files: ["Cargo.toml", "Cargo.lock"]
+  patterns: ["tokio", "axum", "actix"]
+
+scan_paths:
+  src:
+    paths: ["src/"]
+    patterns: ["*.rs"]
+    markers: ["fn ", "struct ", "impl ", "mod "]
+
+  handlers:
+    paths: ["src/handlers/", "src/routes/", "src/api/"]
+    patterns: ["*.rs"]
+    markers: ["async fn", "Handler", "Router"]
+
+  models:
+    paths: ["src/models/", "src/entities/"]
+    patterns: ["*.rs"]
+    markers: ["struct", "derive"]
+
+  services:
+    paths: ["src/services/", "src/domain/"]
+    patterns: ["*.rs"]
+
+  config:
+    paths: ["src/config/", "config/"]
+    patterns: ["*.rs", "*.toml"]
+
+  tests:
+    paths: ["tests/", "src/"]
+    patterns: ["*_test.rs", "*.rs"]
+    markers: ["#[test]", "#[tokio::test]"]
+
+grouping_hints:
+  auth: ["auth", "login", "jwt", "session"]
+  api: ["handler", "route", "endpoint"]
+  db: ["repository", "model", "entity"]
+
+test_command: "cargo test"
+coverage_command: "cargo tarpaulin --out Html"
+build_command: "cargo build --release"

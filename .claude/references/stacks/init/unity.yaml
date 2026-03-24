@@ -1,0 +1,61 @@
+# Unity Stack Reference
+
+name: Unity
+detect:
+  files: ["*.csproj", "Assembly-CSharp.csproj", "ProjectSettings/ProjectSettings.asset"]
+  patterns: ["Unity", "UnityEngine", "MonoBehaviour"]
+
+scan_paths:
+  scripts:
+    paths: ["Assets/Scripts/", "Assets/Code/"]
+    patterns: ["*.cs"]
+    markers: ["MonoBehaviour", "ScriptableObject", "class"]
+
+  components:
+    paths: ["Assets/Scripts/Components/", "Assets/Scripts/Behaviours/"]
+    patterns: ["*.cs"]
+    markers: ["MonoBehaviour", "Update", "Start"]
+
+  systems:
+    paths: ["Assets/Scripts/Systems/", "Assets/Scripts/Managers/"]
+    patterns: ["*.cs"]
+    markers: ["class", "Singleton", "Manager"]
+
+  data:
+    paths: ["Assets/Scripts/Data/", "Assets/Scripts/Models/"]
+    patterns: ["*.cs"]
+    markers: ["[System.Serializable]", "struct", "class"]
+
+  scriptable_objects:
+    paths: ["Assets/ScriptableObjects/", "Assets/Scripts/ScriptableObjects/"]
+    patterns: ["*.cs", "*.asset"]
+    markers: ["ScriptableObject", "CreateAssetMenu"]
+
+  ui:
+    paths: ["Assets/Scripts/UI/", "Assets/Scripts/Views/"]
+    patterns: ["*.cs"]
+    markers: ["Canvas", "Button", "TMP_Text"]
+
+  editor:
+    paths: ["Assets/Editor/", "Assets/Scripts/Editor/"]
+    patterns: ["*.cs"]
+    markers: ["Editor", "CustomEditor", "MenuItem"]
+
+  shaders:
+    paths: ["Assets/Shaders/"]
+    patterns: ["*.shader", "*.hlsl", "*.cginc"]
+
+  tests:
+    paths: ["Assets/Tests/", "Assets/Editor/Tests/"]
+    patterns: ["*.cs"]
+    markers: ["[Test]", "[UnityTest]", "NUnit"]
+
+grouping_hints:
+  player: ["player", "character", "movement", "input"]
+  enemy: ["enemy", "ai", "npc", "behaviour"]
+  ui: ["ui", "hud", "menu", "panel"]
+  audio: ["audio", "sound", "music", "sfx"]
+  vfx: ["vfx", "particle", "effect"]
+
+test_command: "Unity -runTests -testPlatform EditMode -projectPath ."
+build_command: "Unity -batchmode -buildTarget Win64 -projectPath ."

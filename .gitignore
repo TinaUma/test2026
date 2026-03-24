@@ -4,3 +4,7 @@ generate-pdf.mjs
 diagram.mmd
 package.json
 package-lock.json
+
+.frai/
+__pycache__/
+*.pyc

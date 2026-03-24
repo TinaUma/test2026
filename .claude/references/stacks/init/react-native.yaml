@@ -1,0 +1,39 @@
+# React Native Stack Reference
+
+name: React Native
+detect:
+  files: ["package.json", "app.json", "metro.config.js"]
+  patterns: ["react-native", "expo"]
+
+scan_paths:
+  screens:
+    paths: ["src/screens/", "app/screens/", "screens/"]
+    patterns: ["*.js", "*.jsx", "*.tsx"]
+
+  components:
+    paths: ["src/components/", "components/"]
+    patterns: ["*.js", "*.jsx", "*.tsx"]
+
+  hooks:
+    paths: ["src/hooks/", "hooks/"]
+    patterns: ["use*.js", "use*.ts"]
+
+  navigation:
+    paths: ["src/navigation/", "navigation/"]
+    patterns: ["*.js", "*.tsx"]
+    markers: ["createStackNavigator", "createBottomTabNavigator"]
+
+  stores:
+    paths: ["src/stores/", "src/store/"]
+    patterns: ["*.ts", "*.js"]
+
+  services:
+    paths: ["src/services/", "src/api/"]
+    patterns: ["*.ts", "*.js"]
+
+grouping_hints:
+  auth: ["auth", "login", "signup", "onboarding"]
+  navigation: ["navigation", "navigator", "stack", "tab"]
+
+test_command: "npm test"
+coverage_command: "npm test -- --coverage"

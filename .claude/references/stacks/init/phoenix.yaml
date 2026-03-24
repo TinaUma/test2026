@@ -1,0 +1,39 @@
+# Phoenix (Elixir) Stack Reference
+
+name: Phoenix
+detect:
+  files: ["mix.exs"]
+  patterns: ["phoenix"]
+
+scan_paths:
+  controllers:
+    paths: ["lib/*_web/controllers/"]
+    patterns: ["*.ex"]
+    markers: ["defmodule.*Controller"]
+
+  contexts:
+    paths: ["lib/*/"]
+    patterns: ["*.ex"]
+    markers: ["defmodule"]
+
+  schemas:
+    paths: ["lib/*/"]
+    patterns: ["*.ex"]
+    markers: ["use Ecto.Schema"]
+
+  channels:
+    paths: ["lib/*_web/channels/"]
+    patterns: ["*.ex"]
+    markers: ["use Phoenix.Channel"]
+
+  live:
+    paths: ["lib/*_web/live/"]
+    patterns: ["*.ex"]
+    markers: ["use.*LiveView"]
+
+grouping_hints:
+  auth: ["auth", "user", "session", "guardian"]
+  realtime: ["channel", "socket", "presence"]
+
+test_command: "mix test"
+coverage_command: "mix test --cover"

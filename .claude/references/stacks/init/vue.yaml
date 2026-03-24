@@ -1,0 +1,41 @@
+# Vue.js Stack Reference
+
+name: Vue
+detect:
+  files: ["package.json", "vite.config.js", "vite.config.ts"]
+  patterns: ["vue"]
+
+scan_paths:
+  pages:
+    paths: ["src/views/", "src/pages/"]
+    patterns: ["*.vue"]
+
+  components:
+    paths: ["src/components/"]
+    patterns: ["*.vue"]
+
+  composables:
+    paths: ["src/composables/"]
+    patterns: ["*.ts", "*.js"]
+    markers: ["export function use"]
+
+  stores:
+    paths: ["src/stores/", "src/store/"]
+    patterns: ["*.ts", "*.js"]
+    markers: ["defineStore", "createStore"]
+
+  router:
+    paths: ["src/router/"]
+    patterns: ["*.ts", "*.js"]
+    markers: ["createRouter"]
+
+  api:
+    paths: ["src/api/", "src/services/"]
+    patterns: ["*.ts", "*.js"]
+
+grouping_hints:
+  auth: ["login", "auth", "user"]
+  layout: ["layout", "navbar", "sidebar"]
+
+test_command: "npm test"
+coverage_command: "vitest --coverage"

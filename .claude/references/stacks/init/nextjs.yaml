@@ -1,0 +1,40 @@
+# Next.js Stack Reference
+
+name: Next.js
+detect:
+  files: ["package.json", "next.config.js", "next.config.mjs"]
+  patterns: ["next"]
+
+scan_paths:
+  pages:
+    paths: ["src/app/", "app/", "pages/"]
+    patterns: ["page.js", "page.tsx", "*.jsx", "*.tsx"]
+    markers: ["export default"]
+
+  components:
+    paths: ["src/components/", "components/"]
+    patterns: ["*.js", "*.jsx", "*.tsx"]
+
+  hooks:
+    paths: ["src/hooks/", "hooks/"]
+    patterns: ["use*.js", "use*.ts"]
+
+  api:
+    paths: ["src/app/api/", "app/api/", "pages/api/"]
+    patterns: ["route.js", "route.ts", "*.js", "*.ts"]
+
+  lib:
+    paths: ["src/lib/", "lib/", "src/utils/"]
+    patterns: ["*.js", "*.ts"]
+
+  contexts:
+    paths: ["src/contexts/", "src/providers/"]
+    patterns: ["*.js", "*.tsx"]
+
+grouping_hints:
+  auth: ["login", "auth", "signin", "signup", "session"]
+  dashboard: ["dashboard", "admin", "panel"]
+  api: ["api", "route", "handler"]
+
+test_command: "npm test"
+coverage_command: "npm test -- --coverage"

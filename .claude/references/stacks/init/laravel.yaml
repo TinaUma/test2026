@@ -1,0 +1,46 @@
+# Laravel Stack Reference
+
+name: Laravel
+detect:
+  files: ["composer.json", "artisan"]
+  patterns: ["laravel"]
+
+scan_paths:
+  controllers:
+    paths: ["app/Http/Controllers/"]
+    patterns: ["*.php"]
+    markers: ["class.*Controller"]
+
+  models:
+    paths: ["app/Models/"]
+    patterns: ["*.php"]
+    markers: ["class.*extends Model"]
+
+  routes:
+    paths: ["routes/"]
+    patterns: ["*.php"]
+    markers: ["Route::"]
+
+  middleware:
+    paths: ["app/Http/Middleware/"]
+    patterns: ["*.php"]
+
+  services:
+    paths: ["app/Services/"]
+    patterns: ["*.php"]
+
+  jobs:
+    paths: ["app/Jobs/"]
+    patterns: ["*.php"]
+    markers: ["implements ShouldQueue"]
+
+  migrations:
+    paths: ["database/migrations/"]
+    patterns: ["*.php"]
+
+grouping_hints:
+  auth: ["auth", "login", "user", "password"]
+  api: ["api", "resource", "controller"]
+
+test_command: "php artisan test"
+coverage_command: "php artisan test --coverage"
