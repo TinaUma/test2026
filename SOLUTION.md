@@ -40,7 +40,7 @@ flowchart TD
     S3 -->|"✅ ~12% resolved"| OUT
     S3 -->|"❌ all patterns invalid"| S4
 
-    S4["🤖 Stage 4 — LLM Deep Parse\nGemini 1.5 Flash · 128K context\nExtract structured context → re-query S1–S3\n$0.075 / 1M input tokens"]
+    S4["🤖 Stage 4 — LLM Deep Parse\nGemini 2.0 Flash · 1M context\nExtract structured context → re-query S1–S3\n$0.10 / 1M input tokens"]
     S4 -->|"✅ ~13% resolved via re-query"| OUT
     S4 -->|"❌ still no contact"| S5
 
@@ -85,9 +85,9 @@ flowchart TD
 - Hunter.io Domain Search как дополнение: находит реальные паттерны компании через известные email-адреса
 - **Hit rate:** ~40% для записей с известным доменом
 
-#### Stage 4 — LLM Deep Parse (Gemini 1.5 Flash)
+#### Stage 4 — LLM Deep Parse (Gemini 2.0 Flash)
 - Запускается для записей, где Stages 0–3 не нашли контакт
-- Задача LLM: глубокий анализ статьи (128K context window → весь HTML без обрезки) → структурированный вывод:
+- Задача LLM: глубокий анализ статьи (**1M token context window** → весь HTML без обрезки) → структурированный вывод:
   ```json
   {
     "company": "...",
@@ -100,11 +100,14 @@ flowchart TD
   }
   ```
 - Возвращаем в Stage 1–3 с обогащёнными данными
-- **Почему Gemini 1.5 Flash, а не другие:**
-  - Цена: $0.075/1M input tokens — в 10x дешевле Claude Haiku ($0.80/1M)
-  - Контекстное окно: 1M токенов (избыточно, но страховка для длинных страниц)
+- **Почему Gemini 2.0 Flash, а не другие:**
+  - Цена: $0.10/1M input tokens — в 8x дешевле Claude Haiku ($0.80/1M)
+  - Context window: **1M токенов** — покрывает любую веб-страницу без обрезки
   - Скорость: один из самых быстрых inference API на рынке
-  - Для простой structured extraction не нужен Opus/Sonnet — Flash справляется с точностью >95%
+  - Для structured extraction не нужен Opus/Sonnet — Flash справляется с точностью >95%
+
+> **Архитектурная заметка — вариант "LLM-first":**
+> При высоком приоритете качества LLM-обогащение можно вынести на **Stage 0.5** — применять ко всем записям сразу после скрапинга статьи. Это улучшает качество поисковых запросов S1 с самого начала (запрос `"Иван Петров" "McKinsey" site:linkedin.com` vs `"Иван Петров" site:linkedin.com`). Дополнительная стоимость: ~$250 на 1M записей. Рост hit rate S1: с ~10% до ~25%. Выбор между вариантами зависит от соотношения ценность-контакта / бюджет-обработки.
 
 #### Stage 5 — Commercial Fallback (People Data Labs)
 - Для ~25–30% записей, не найденных на Stages 0–4
@@ -115,7 +118,57 @@ flowchart TD
 
 ---
 
-### 1.4 Технический стек
+### 1.4 Схема выходной записи
+
+Каждая обработанная запись сохраняется в PostgreSQL в следующем формате:
+
+```json
+{
+  "id": "uuid",
+  "input": {
+    "name": "Иван",
+    "surname": "Петров",
+    "article_url": "https://example.com/person/ivan-petrov"
+  },
+  "context": {
+    "company": "McKinsey & Company",
+    "role": "Senior Partner",
+    "domain": "mckinsey.com",
+    "industry": "consulting"
+  },
+  "contacts": {
+    "emails": [
+      {
+        "value": "ivan.petrov@mckinsey.com",
+        "confidence": 0.94,
+        "source": "hunter_io",
+        "verified": true
+      }
+    ],
+    "phones": [
+      {
+        "value": "+7-999-123-45-67",
+        "confidence": 0.65,
+        "source": "pdl",
+        "verified": false
+      }
+    ],
+    "linkedin": "https://linkedin.com/in/ivan-petrov-mckinsey",
+    "twitter": null
+  },
+  "meta": {
+    "resolved_at_stage": 2,
+    "confidence_score": 0.91,
+    "processed_at": "2025-01-15T14:32:00Z"
+  }
+}
+```
+
+`confidence_score` на уровне записи — взвешенное среднее по найденным контактам (подробнее в разделе 4.3).
+
+---
+
+### 1.5 Технический стек
 
 | Компонент | Технология | Обоснование |
 |-----------|-----------|-------------|
@@ -159,23 +212,24 @@ PostgreSQL (results)
 | **Stage 2** | Proxycurl Profile API | $0.01/profile | ~350K LinkedIn URLs | **$3,500** |
 | **Stage 3** | MillionVerifier bulk | $269/1M верификаций | ~1.5M паттернов | **$405** |
 | **Stage 3** | Hunter.io Domain Search | $0.003/домен | ~200K доменов | **$600** |
-| **Stage 4** | Gemini 1.5 Flash (input) | $0.075/1M tokens | 300K × 2,500 tok = 750M | **$56** |
-| **Stage 4** | Gemini 1.5 Flash (output) | $0.30/1M tokens | 300K × 400 tok = 120M | **$36** |
+| **Stage 4** | Gemini 2.0 Flash (input) | $0.10/1M tokens | 300K × 2,500 tok = 750M | **$75** |
+| **Stage 4** | Gemini 2.0 Flash (output) | $0.40/1M tokens | 300K × 400 tok = 120M | **$48** |
 | **Stage 4** | DataForSEO re-query | $0.0006/req | 300K × 2 = 600K | **$360** |
 | **Stage 4** | Proxycurl (новые LinkedIn URLs) | $0.01/profile | ~100K | **$1,000** |
 | **Stage 5** | People Data Labs Email API | $0.01/record | ~250K | **$2,500** |
-| **Infra** | AWS EC2 Spot (c5.xlarge × 4, ~72h) | $0.04/h | 4 × 72h | **$11** |
-| **Infra** | AWS RDS t3.micro + Redis | ~$0.03/h | 2 × 72h | **$5** |
-| **Буфер** | Ошибки, повторы, тесты | — | ~10% overhead | **$900** |
-| | | | **ИТОГО** | **~$10,623** |
+| **Infra** | AWS EC2 Spot (c5.xlarge × 8, ~80h) | $0.04/h | 8 × 80h | **$26** |
+| **Infra** | AWS RDS t3.small + ElastiCache | ~$0.05/h | 2 × 80h | **$8** |
+| **Infra** | NAT Gateway + Data Transfer + misc | — | ~80h run | **$90** |
+| **Буфер** | Ошибки, повторы, тесты (~10%) | — | — | **$960** |
+| | | | **ИТОГО** | **~$10,837** |
 
 ### 2.2 Стоимость на запись
 
 | Метрика | Значение |
 |---------|---------|
-| Стоимость 1M строк | ~$10,000–11,000 |
-| **Стоимость 1 записи** | **~$0.010–0.011** |
-| Стоимость 1 найденного контакта (при 80% hit rate) | ~$0.013–0.014 |
+| Стоимость 1M строк | ~$10,500–11,500 |
+| **Стоимость 1 записи** | **~$0.011** |
+| Стоимость 1 найденного контакта (при 80% hit rate) | ~$0.014 |
 
 ### 2.3 Альтернативный сценарий: Lean (без коммерческих API)
 
@@ -216,7 +270,7 @@ PostgreSQL (results)
 Неделя 2
 ├── Stage 2: Proxycurl интеграция
 ├── Stage 3: Email pattern generation + MillionVerifier
-└── Stage 4: Gemini 1.5 Flash интеграция + prompt engineering
+└── Stage 4: Gemini 2.0 Flash интеграция + prompt engineering
 
 Неделя 3
 ├── Stage 5: PDL интеграция
@@ -266,7 +320,25 @@ PostgreSQL (results)
 | Закрытые источники | LinkedIn анонимизирует часть данных | Proxycurl как единственный легальный обходной путь |
 | JS-блокировки | Cloudflare / антибот-защита | Playwright + proxy rotation + exponential backoff |
 
-### 4.3 Ethical Scraping & Platform Compliance
+### 4.3 Confidence Score
+
+Каждый найденный контакт получает оценку достоверности от 0 до 1:
+
+| Источник | Метод верификации | Confidence |
+|----------|------------------|-----------|
+| Hunter.io + SMTP verify | Реальная SMTP-проверка | **0.90–0.97** |
+| Email pattern + MillionVerifier | SMTP без отправки | **0.85–0.93** |
+| LinkedIn via Proxycurl | Профиль заполнен пользователем | **0.95–0.99** |
+| People Data Labs | Агрегация без real-time verify | **0.55–0.75** |
+| Scraping (regex из статьи) | Структурный анализ страницы | **0.80–0.90** |
+| Phone (любой источник) | Без верификации | **0.50–0.70** |
+
+`confidence_score` записи = взвешенное среднее по всем найденным контактам.
+**Порог для использования в outreach: ≥ 0.80** — ниже этого порога контакт помечается как `needs_review`.
+
+---
+
+### 4.4 Ethical Scraping & Platform Compliance
 
 **Это принципиальный раздел.** Пайплайн должен работать в рамках правил платформ и законодательства:
 
@@ -284,19 +356,21 @@ PostgreSQL (results)
 
 | Параметр | Значение |
 |---------|---------|
-| Стоимость 1M строк | ~$10,000–11,000 |
-| Стоимость 1 записи | ~$0.010 |
+| Стоимость 1M строк | ~$10,500–11,500 |
+| Стоимость 1 записи | ~$0.011 |
 | Hit rate (любой контакт) | 75–85% |
 | Email hit rate | 55–65% |
 | Срок разработки | 3 недели (1 инженер) |
 | Срок обработки 1M | 2.5–3 дня |
-| Ключевые технологии | Python · Celery · Gemini 1.5 Flash · DataForSEO · Proxycurl · PDL |
+| Ключевые технологии | Python · Celery · Gemini 2.0 Flash · DataForSEO · Proxycurl · PDL |
 
 **Сильные стороны подхода:**
-- Tiered early-exit: платим только за то, что нужно
-- Gemini 1.5 Flash как LLM: в 10x дешевле аналогов при достаточной точности для extraction-задач
-- Proxycurl как единственный compliant путь к LinkedIn-данным
-- Modular: каждый stage можно заменить/улучшить независимо
+- Tiered early-exit: платим только за то, что нужно — экономия 3–4x vs единый API
+- Gemini 2.0 Flash как LLM: в 8x дешевле Claude Haiku, 1M context window покрывает любую страницу
+- Proxycurl — единственный compliant путь к LinkedIn без риска блокировки и судебных претензий
+- Confidence score на каждом контакте: outreach только по данным с score ≥ 0.80
+- Modular: каждый stage заменяется независимо (swap PDL → Apollo, DataForSEO → Bing — без переписывания пайплайна)
+- Два режима: Standard (~$11K, 80% hit rate) и Lean (~$4.5K, 57% hit rate) — выбор под бюджет
 
 **Альтернатива «всё в одном»:**
 Apollo.io или ZoomInfo на весь объём: $20,000–50,000 за 1M записей при меньшей гибкости и той же покрываемости. Tiered pipeline в 2–5x дешевле.
