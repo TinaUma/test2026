@@ -17,20 +17,29 @@
 
 | Раздел | Содержание |
 |--------|-----------|
-| Архитектура пайплайна | Tiered Early-Exit Pipeline, Mermaid-диаграмма потоков данных |
-| Расчёт стоимости 1M строк | Детализация по сервисам и тарифам, итог ~$10,000 / $0.01 per record |
+| Архитектура пайплайна | Tiered Early-Exit Pipeline, Mermaid-диаграмма потоков данных, схема выходной записи |
+| Расчёт стоимости 1M строк | Детализация по сервисам и тарифам, итог ~$10,500–11,500 / $0.011 per record |
 | Ресурсы и сроки | 1 инженер, 3 недели разработки, 2–3 дня процессинга |
-| Качество и ограничения | Hit rate, технические ограничения, Ethical Scraping & GDPR |
+| Качество и ограничения | Hit rate, Confidence Score, технические ограничения, Ethical Scraping & GDPR |
 
 **[→ SOLUTION.pdf](SOLUTION.pdf)** — PDF-версия для удобного чтения.
 
 ## Ключевые решения
 
-- **Tiered Early-Exit** — каждая запись обрабатывается от дешёвого уровня к дорогому, выходит как только контакт найден. Экономия 3–4x vs единый дорогой API на весь объём
-- **Gemini 1.5 Flash** для LLM-обогащения — в 10x дешевле Claude Haiku при достаточной точности для extraction-задач ($0.075/1M tokens)
+- **Tiered Early-Exit** — запись проходит уровни от дешёвого к дорогому, выходит как только контакт найден. Экономия 3–4x vs единый API на весь объём
+- **Gemini 2.0 Flash** для LLM-обогащения — в 8x дешевле Claude Haiku, 1M token context window ($0.10/1M tokens)
 - **DataForSEO** вместо Google Custom Search API — в 5x дешевле ($0.0006 vs $0.003/запрос)
-- **Proxycurl** для LinkedIn — единственный compliant способ получить данные без нарушения ToS
+- **Proxycurl** для LinkedIn — единственный compliant способ получить данные без нарушения ToS (HiQ Labs v. LinkedIn)
+- **Confidence Score** на каждом контакте — outreach только по данным с score ≥ 0.80
 
 ## Стек решения
 
-`Python 3.11` · `Celery + Redis` · `Gemini 1.5 Flash` · `DataForSEO` · `Proxycurl` · `Hunter.io` · `People Data Labs` · `AWS Spot`
+`Python 3.11` · `Celery + Redis` · `Gemini 2.0 Flash` · `DataForSEO` · `Proxycurl` · `Hunter.io` · `MillionVerifier` · `People Data Labs` · `AWS Spot`
+
+## История коммитов
+
+| Коммит | Описание |
+|--------|---------|
+| `6141c06` | Первичное решение тестового задания |
+| `27e34e5` | Инициализация Frai framework (.claude-lib submodule) |
+| `b63d0ee` | Post-submission review: исправление неточностей, output schema, confidence score |
